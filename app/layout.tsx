@@ -4,7 +4,8 @@ import './globals.css';
 
 import Navbar from './components/Navbar/Navbar';
 import ClientOnly from './components/shared/ClientOnly';
-import Modal from './components/Modals/Modal';
+import RegisterModal from './components/Modals/RegisterModal';
+import ToasterProvider from './providers/ToasterProvider';
 
 export const metadata: Metadata = {
   title: 'Airbnb',
@@ -24,7 +25,8 @@ export default function RootLayout({
     <html lang='en'>
       <body className={font.className}>
         <ClientOnly>
-          {/* <Modal actionLabel='Submit' title='Hello, World!' isOpen /> */}
+          <ToasterProvider />
+          <RegisterModal />
           <Navbar />
         </ClientOnly>
         {children}
