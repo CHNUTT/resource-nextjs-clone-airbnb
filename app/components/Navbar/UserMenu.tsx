@@ -2,12 +2,20 @@
 
 import { AiOutlineMenu } from 'react-icons/ai';
 import Avatar from '../shared/Avatar';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import MenuItem from './MenuItem';
 import useRegisterModal from '@/app/hooks/useRegisterModal';
+import useLoginModal from '@/app/hooks/useLoginModal';
+import { User } from '@prisma/client';
+import { signOut } from 'next-auth/react';
 
-const UserMenu = () => {
+interface UserMenuProps {
+  currentUser?: User | null;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const registerModal = useRegisterModal();
+  const loginModal = useLoginModal();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
@@ -74,14 +82,28 @@ const UserMenu = () => {
           '
         >
           <div className='flex flex-col cursor-pointer'>
-            <>
-              <MenuItem handleOnClick={() => {}} label='Login' />
-              <MenuItem handleOnClick={registerModal.onOpen} label='Sign up' />
-            </>
+            {
+              currentUser ? (
+                <>
+                  <MenuItem handleOnClick={loginModal.onOpen} label='My trips' />
+                  <MenuItem handleOnClick={loginModal.onOpen} label='My Favorites' />
+                  <MenuItem handleOnClick={loginModal.onOpen} label='My reservations' />
+                  <MenuItem handleOnClick={loginModal.onOpen} label='My properties' />
+                  <MenuItem handleOnClick={loginModal.onOpen} label='Airbnb my home' />
+                  <MenuItem handleOnClick={signOut} label='Logout' />
+                </>
+              ) : (
+                <>
+                  <MenuItem handleOnClick={loginModal.onOpen} label='Login' />
+                  <MenuItem handleOnClick={registerModal.onOpen} label='Sign up' />
+                </>
+              )
+            }
+
           </div>
         </div>
       )}
-    </div>
+    </div >
   );
 };
 
