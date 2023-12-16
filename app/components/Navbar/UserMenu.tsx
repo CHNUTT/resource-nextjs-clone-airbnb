@@ -4,8 +4,9 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import Avatar from '../shared/Avatar';
 import React, { useCallback, useState } from 'react';
 import MenuItem from './MenuItem';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
 import useLoginModal from '@/app/hooks/useLoginModal';
+import useRegisterModal from '@/app/hooks/useRegisterModal';
+import useRentModal from '@/app/hooks/useRentModal';
 import { signOut } from 'next-auth/react';
 import { SafeUser } from '@/app/types';
 
@@ -16,17 +17,28 @@ interface UserMenuProps {
 const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
+  const rentModal = useRentModal();
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((prevValue) => !prevValue);
   }, []);
 
+  const onRent = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    // Open Rent Modal
+    rentModal.onOpen();
+  }, [currentUser, loginModal, rentModal]);
+
   return (
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
         <div
-          onClick={toggleOpen}
+          onClick={onRent}
           className='
             hidden
             md:block
@@ -82,28 +94,40 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
           '
         >
           <div className='flex flex-col cursor-pointer'>
-            {
-              currentUser ? (
-                <>
-                  <MenuItem handleOnClick={loginModal.onOpen} label='My trips' />
-                  <MenuItem handleOnClick={loginModal.onOpen} label='My Favorites' />
-                  <MenuItem handleOnClick={loginModal.onOpen} label='My reservations' />
-                  <MenuItem handleOnClick={loginModal.onOpen} label='My properties' />
-                  <MenuItem handleOnClick={loginModal.onOpen} label='Airbnb my home' />
-                  <MenuItem handleOnClick={signOut} label='Logout' />
-                </>
-              ) : (
-                <>
-                  <MenuItem handleOnClick={loginModal.onOpen} label='Login' />
-                  <MenuItem handleOnClick={registerModal.onOpen} label='Sign up' />
-                </>
-              )
-            }
-
+            {currentUser ? (
+              <>
+                <MenuItem handleOnClick={loginModal.onOpen} label='My trips' />
+                <MenuItem
+                  handleOnClick={loginModal.onOpen}
+                  label='My Favorites'
+                />
+                <MenuItem
+                  handleOnClick={loginModal.onOpen}
+                  label='My reservations'
+                />
+                <MenuItem
+                  handleOnClick={loginModal.onOpen}
+                  label='My properties'
+                />
+                <MenuItem
+                  handleOnClick={rentModal.onOpen}
+                  label='Airbnb my home'
+                />
+                <MenuItem handleOnClick={signOut} label='Logout' />
+              </>
+            ) : (
+              <>
+                <MenuItem handleOnClick={loginModal.onOpen} label='Login' />
+                <MenuItem
+                  handleOnClick={registerModal.onOpen}
+                  label='Sign up'
+                />
+              </>
+            )}
           </div>
         </div>
       )}
-    </div >
+    </div>
   );
 };
 
