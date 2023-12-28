@@ -59,7 +59,7 @@ model Listing {
   createdAt     DateTime @default(now())
   category      String
   roomCount     Int
-  bathroomCound Int
+  bathroomCount Int
   guestCount    Int
   locationValue String
   price         Int
